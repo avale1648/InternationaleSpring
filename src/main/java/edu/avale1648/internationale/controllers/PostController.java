@@ -1,66 +1,61 @@
 package edu.avale1648.internationale.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import edu.avale1648.internationale.entities.Post;
+import edu.avale1648.internationale.exceptions.PostNotFoundException;
 import edu.avale1648.internationale.repositories.PostRepository;
 
-@Controller
-@RequestMapping(path="/posts")
+@RestController
 public class PostController {
-	@Autowired
-	private PostRepository repository;
-	private UserController userController = new UserController();
-	private GroupConroller groupController = new GroupConroller();
-	
-	
-	@PostMapping(path="/create-or-update")
-	public @ResponseBody Post createOrUpdate(@RequestParam Integer userId, @RequestParam Integer groupId, @RequestParam String text) {
-		var user = userController.read(userId);
-		if(user == null) {
-			throw new IllegalStateException("User not found");
-		}
-		var group = groupController.read(groupId);
-		
-		var post = new Post(user, group, text);
-		
-		repository.save(post);
-		
-		return post;
-	}
-	
-	@GetMapping(path = "/read")
-	public @ResponseBody Post read(@RequestParam Integer id) {
-		return repository.findById(id).get();
+	private final PostRepository REPOSITORY;
+
+	public PostController(PostRepository repository) {
+		REPOSITORY = repository;
 	}
 
-	@GetMapping(path = "/read-all")
-	public @ResponseBody Iterable<Post> readAll() {
-		return repository.findAll();
+	@PostMapping("/posts")
+	public Post create(@RequestBody Post post) {
+		return REPOSITORY.save(post);
 	}
 
-	@DeleteMapping(path = "/delete")
-	public @ResponseBody Post delete(@RequestParam Integer id) {
-		var post = repository.findById(id).get();
-
-		repository.delete(post);
-
-		return post;
+	@GetMapping("/posts/{id}")
+	public Post read(@PathVariable Integer id) {
+		return REPOSITORY.findById(id).orElseThrow(() -> new PostNotFoundException(id));
 	}
 
-	@DeleteMapping(path = "/delete-all")
-	public @ResponseBody Iterable<Post> deleteAll() {
-		var posts = repository.findAll();
+	// Aggregate root
+	// tag::get-aggregate-root[]
+	@GetMapping("/posts")
+	public Iterable<Post> readAll() {
+		return REPOSITORY.findAll();
+	}
+	// end::get-aggregate-root[]
 
-		repository.deleteAll();
+	@PutMapping("/posts/{id}")
+	public Post update(@RequestBody Post newPost, @PathVariable Integer id) {
+		return REPOSITORY.findById(id).map(post -> {
+			post = new Post(newPost);
+			return REPOSITORY.save(post);
+		}).orElseGet(() -> {
+			newPost.setId(id);
+			return REPOSITORY.save(newPost);
+		});
+	}
 
-		return posts;
+	@DeleteMapping("/posts/{id}")
+	public void delete(@PathVariable Integer id) {
+		REPOSITORY.deleteById(id);
+	}
+
+	@DeleteMapping("/posts")
+	public void deleteAll() {
+		REPOSITORY.deleteAll();
 	}
 }

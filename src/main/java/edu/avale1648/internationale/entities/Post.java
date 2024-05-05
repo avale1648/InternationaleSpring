@@ -44,8 +44,23 @@ public class Post {
 		this.text = text;
 	}
 	
+	public Post(Post that) {
+		this.postdate = that.postdate;
+		this.user = new User(that.user);
+		this.group = new Group(that.group);
+		this.text = that.text;
+		this.rating = that.rating;
+		for (String file : that.files) {
+			this.files.add(file);
+		}
+	}
+	
 	public Integer getId() {
 		return id;
+	}
+	
+	public void setId(Integer value) {
+		id = value;
 	}
 	
 	public Timestamp getPostdate() {

@@ -1,58 +1,62 @@
 package edu.avale1648.internationale.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import edu.avale1648.internationale.entities.Group;
+import edu.avale1648.internationale.exceptions.GroupNotFoundException;
 import edu.avale1648.internationale.repositories.GroupRepository;
 
-@Controller
-@RequestMapping(path = "/groups")
+@RestController
 public class GroupConroller {
-	@Autowired
-	private GroupRepository repository;
+	private final GroupRepository REPOSITORY;
 
-	@PostMapping(path = "/create-or-update")
-	public @ResponseBody Group createOrUpdate(@RequestParam String name, @RequestParam boolean mature) {
-		var group = new Group(name, mature);
-
-		repository.save(group);
-
-		return group;
+	public GroupConroller(GroupRepository repository) {
+		REPOSITORY = repository;
 	}
 
-	@GetMapping(path = "/read")
-	public @ResponseBody Group read(Integer id) {
-		return repository.findById(id).get();
+	@PostMapping("/groups")
+	public Group create(@RequestBody Group group) {
+		return REPOSITORY.save(group);
 	}
 
-	@GetMapping(path = "/read-all")
-	public @ResponseBody Iterable<Group> readAll() {
-		return repository.findAll();
+	@GetMapping("/groups/{id}")
+	public Group read(@PathVariable Integer id) {
+		return REPOSITORY.findById(id).orElseThrow(() -> new GroupNotFoundException(id));
 	}
 
-	@DeleteMapping(path = "/delete")
-	public @ResponseBody Group delete(@RequestParam Integer id) {
-		var group = repository.findById(id).get();
+	// Aggregate root
+	// tag::get-aggregate-root[]
+	@GetMapping("/groups")
+	public Iterable<Group> readAll() {
+		return REPOSITORY.findAll();
+	}
+	// end::get-aggregate-root[]
 
-		repository.delete(group);
-
-		return group;
+	@PutMapping("/groups/{id}")
+	public Group update(@RequestBody Group newGroup, @PathVariable Integer id) {
+		return REPOSITORY.findById(id).map(group -> {
+			group = new Group(newGroup);
+			return REPOSITORY.save(group);
+		}).orElseGet(() -> {
+			newGroup.setId(id);
+			return REPOSITORY.save(newGroup);
+		});
 	}
 
-	@DeleteMapping(path = "/delete-all")
-	public @ResponseBody Iterable<Group> deleteAll() {
-		var groups = repository.findAll();
+	@DeleteMapping("/groups/{id}")
+	public void delete(@PathVariable Integer id) {
+		REPOSITORY.deleteById(id);
+	}
 
-		repository.deleteAll();
-
-		return groups;
+	@DeleteMapping("/groups")
+	public void deleteAll() {
+		REPOSITORY.deleteAll();
 	}
 
 }
