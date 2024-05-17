@@ -1,21 +1,36 @@
 package edu.avale1648.configuration;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
+import edu.avale1648.internationale.entities.Group;
+import edu.avale1648.internationale.entities.Post;
+import edu.avale1648.internationale.entities.User;
 import edu.avale1648.internationale.repositories.GroupRepository;
 import edu.avale1648.internationale.repositories.PostRepository;
 import edu.avale1648.internationale.repositories.UserRepository;
 
-@Configuration
-public class DbLoader {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DbLoader.class);
-	
-	//@Bean
-	//CommandLineRunner initDb(UserRepository ur, GroupRepository gr, PostRepository pr) {
-		
-	//}
+@Component
+public class DbLoader implements CommandLineRunner {
+	private final UserRepository USERS;
+	private final GroupRepository GROUPS;
+	private final PostRepository POSTS;
+
+	@Autowired
+	public DbLoader(UserRepository users, GroupRepository groups, PostRepository posts) {
+		USERS = users;
+		GROUPS = groups;
+		POSTS = posts;
+	}
+
+	@Override
+	public void run(String... args) throws Exception {
+		var lenin = new User("Lenin", "lenin@pochta.su", "ninel", "22-04-1870");
+		var ussr = new Group("USSR", false);
+
+		USERS.save(lenin);
+		GROUPS.save(ussr);
+		POSTS.save(new Post(lenin, ussr, "Пролетарии всех стран, соединяйтесь!"));
+	}
 }
