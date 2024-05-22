@@ -1,0 +1,15 @@
+.header{
+    width:100%;
+    height: auto;
+    display: flex;
+    flex-direction: raw;
+    align-items: center;
+    justify-content: space-between;
+    padding-right:25px;
+    border:1px solid lightgray;
+}
+  
+.header-img {
+    width: 300px;
+    height: 75px;
+}

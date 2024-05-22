@@ -1,5 +1,6 @@
 package edu.avale1648.internationale.controllers;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,15 +31,13 @@ public class UserController {
 	public User read(@PathVariable Integer id) {
 		return REPOSITORY.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 	}
-	
-	// Aggregate root
-	// tag::get-aggregate-root[]
+	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/users")
 	public Iterable<User> readAll() {
 		return REPOSITORY.findAll();
+		//return 
 	}
-	// end::get-aggregate-root[]
-
+	
 	@PutMapping("/users/{id}")
 	public User update(@RequestBody User newUser, @PathVariable Integer id) {
 		return REPOSITORY.findById(id).map(user -> {

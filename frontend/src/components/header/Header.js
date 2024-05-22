@@ -1,0 +1,15 @@
+import React, { Component } from 'react';
+import logo from '../../logo.png';
+import './styles.css';
+
+class Header extends Component {
+  render() {
+    return <div className='header'>
+    <img className='header-img' src={logo} alt="logo.png" />
+    <input type='text' className='searchbar' placeholder='Search...'></input>
+    <button className='header-button'>Sign Up</button>
+  </div>;
+  }
+}
+
+export default Header;
