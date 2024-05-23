@@ -30,13 +30,10 @@ public class PostController {
 		return REPOSITORY.findById(id).orElseThrow(() -> new PostNotFoundException(id));
 	}
 
-	// Aggregate root
-	// tag::get-aggregate-root[]
 	@GetMapping("/posts")
 	public Iterable<Post> readAll() {
 		return REPOSITORY.findAll();
 	}
-	// end::get-aggregate-root[]
 
 	@PutMapping("/posts/{id}")
 	public Post update(@RequestBody Post newPost, @PathVariable Integer id) {

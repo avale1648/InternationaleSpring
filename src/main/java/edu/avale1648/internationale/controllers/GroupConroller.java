@@ -30,13 +30,10 @@ public class GroupConroller {
 		return REPOSITORY.findById(id).orElseThrow(() -> new GroupNotFoundException(id));
 	}
 
-	// Aggregate root
-	// tag::get-aggregate-root[]
 	@GetMapping("/groups")
 	public Iterable<Group> readAll() {
 		return REPOSITORY.findAll();
 	}
-	// end::get-aggregate-root[]
 
 	@PutMapping("/groups/{id}")
 	public Group update(@RequestBody Group newGroup, @PathVariable Integer id) {

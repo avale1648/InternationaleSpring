@@ -31,11 +31,11 @@ public class UserController {
 	public User read(@PathVariable Integer id) {
 		return REPOSITORY.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 	}
+	
 	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/users")
 	public Iterable<User> readAll() {
 		return REPOSITORY.findAll();
-		//return 
 	}
 	
 	@PutMapping("/users/{id}")
