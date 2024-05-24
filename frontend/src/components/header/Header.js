@@ -6,8 +6,8 @@ class Header extends Component {
   render() {
     return <div className='header'>
     <img className='header-img' src={logo} alt="logo.png" />
-    <input type='text' className='searchbar' placeholder='Search...'></input>
-    <button className='header-button'>Sign Up</button>
+    <input type='text' className='searchbar' placeholder='Поиск...'></input>
+    <button className='header-button'>Войти</button>
   </div>;
   }
 }

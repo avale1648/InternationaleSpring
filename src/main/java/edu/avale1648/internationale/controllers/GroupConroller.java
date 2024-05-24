@@ -1,5 +1,6 @@
 package edu.avale1648.internationale.controllers;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,12 +26,12 @@ public class GroupConroller {
 		return REPOSITORY.save(group);
 	}
 
-	@GetMapping("/groups/{id}")
+	@GetMapping(value = "/groups/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Group read(@PathVariable Integer id) {
 		return REPOSITORY.findById(id).orElseThrow(() -> new GroupNotFoundException(id));
 	}
 
-	@GetMapping("/groups")
+	@GetMapping(value = "/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Iterable<Group> readAll() {
 		return REPOSITORY.findAll();
 	}

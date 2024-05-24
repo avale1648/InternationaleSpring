@@ -1,5 +1,6 @@
 package edu.avale1648.internationale.controllers;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,13 +28,13 @@ public class UserController {
 		return REPOSITORY.save(user);
 	}
 
-	@GetMapping("/users/{id}")
+	@GetMapping(value = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public User read(@PathVariable Integer id) {
 		return REPOSITORY.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 	}
 	
 	@CrossOrigin(origins = "http://localhost:3000")
-	@GetMapping("/users")
+	@GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Iterable<User> readAll() {
 		return REPOSITORY.findAll();
 	}

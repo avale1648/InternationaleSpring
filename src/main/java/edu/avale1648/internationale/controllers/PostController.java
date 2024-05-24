@@ -1,5 +1,6 @@
 package edu.avale1648.internationale.controllers;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,12 +26,12 @@ public class PostController {
 		return REPOSITORY.save(post);
 	}
 
-	@GetMapping("/posts/{id}")
+	@GetMapping(value = "/posts/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Post read(@PathVariable Integer id) {
 		return REPOSITORY.findById(id).orElseThrow(() -> new PostNotFoundException(id));
 	}
 
-	@GetMapping("/posts")
+	@GetMapping(value = "/posts", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Iterable<Post> readAll() {
 		return REPOSITORY.findAll();
 	}
